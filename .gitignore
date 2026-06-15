@@ -11,3 +11,6 @@ backups/
 
 # Backups soltos
 *.bak*
+
+# Arquivos zip
+*.zip
