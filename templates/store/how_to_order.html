@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Como fazer um pedido | WebMaster{% endblock %}
+{% block meta_description %}Veja como escolher um pacote, pagar via Pix e acompanhar seu pedido na WebMaster.{% endblock %}
+
+{% block content %}
+<section class="how-to-hero">
+  <div class="container">
+    <div class="how-to-hero-copy">
+      <span class="eyebrow">Compra simples e acompanhável</span>
+      <h1>Como fazer um pedido na <span class="gradient-text">WebMaster</span></h1>
+      <p>Veja o passo a passo para comprar com segurança e acompanhar seu pedido.</p>
+    </div>
+  </div>
+</section>
+
+<section class="container how-to-content">
+  <div class="how-to-grid">
+    <article class="how-to-step"><b>01</b><div><h2>Escolha o serviço e o pacote</h2><p>Selecione Instagram ou TikTok, escolha o serviço desejado e clique no pacote que melhor combina com seu objetivo.</p></div></article>
+    <article class="how-to-step"><b>02</b><div><h2>Informe o perfil ou link correto</h2><p>Digite o @ do perfil ou cole o link solicitado. Para comentários personalizados, use o link da publicação, Reels ou vídeo.</p></div></article>
+    <article class="how-to-step"><b>03</b><div><h2>Mantenha o perfil público</h2><p>Seu perfil precisa estar público durante o processamento. Não pedimos sua senha em nenhuma etapa.</p></div></article>
+    <article class="how-to-step"><b>04</b><div><h2>Informe seus dados de contato</h2><p>Use um email válido e seu WhatsApp para receber suporte e consultar seu pedido depois.</p></div></article>
+    <article class="how-to-step"><b>05</b><div><h2>Pague via Pix</h2><p>Após finalizar, você será redirecionado para a página de pagamento com o código Pix.</p></div></article>
+    <article class="how-to-step"><b>06</b><div><h2>Aguarde o processamento</h2><p>Depois da confirmação do pagamento, o pedido será enviado para processamento.</p></div></article>
+    <article class="how-to-step"><b>07</b><div><h2>Consulte seu pedido</h2><p>Use a área Meus Pedidos para acompanhar o status usando o código do pedido e o contato informado.</p></div></article>
+  </div>
+
+  <aside class="how-to-notice">
+    <strong>Proteja sua conta</strong>
+    <p>A WebMaster não solicita senha, código de segurança ou acesso à sua conta.</p>
+  </aside>
+
+  <div class="how-to-actions">
+    <a class="btn btn-dark btn-pill" href="{% url 'store:instagram' %}">Ver serviços do Instagram</a>
+    <a class="btn btn-dark btn-pill" href="{% url 'store:tiktok' %}">Ver serviços do TikTok</a>
+    <a class="btn btn-orders btn-pill" href="{% url 'store:order_lookup' %}">Consultar pedido</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Pacotes para {{ platform.name }} | WebMaster{% endblock %}
+{% block content %}
+<section class="platform-hero">
+  <div class="container">
+    <div class="platform-hero-copy mx-auto text-center">
+      <span class="eyebrow">WebMaster para {{ platform.name }}</span>
+      <h1>Encontre o pacote certo para seu <span class="gradient-text">{{ platform.name }}</span></h1>
+      <p>{{ platform.description }} Escolha abaixo e continue para o checkout seguro.</p>
+      <div class="trust-seals">
+        <span><b>&#10003;</b> Não pedimos sua senha</span>
+        <span><b>&#10003;</b> Pagamento via Pix</span>
+        <span><b>&#10003;</b> Perfil sempre sob seu controle</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="anchor-nav" aria-label="Categorias de serviço">
+  <div class="container anchor-scroll">
+    {% for service in platform.services.all %}<a href="#{{ service.slug }}">{{ service.name }}</a>{% endfor %}
+  </div>
+</nav>
+
+<section class="container catalog-space">
+  {% for service in platform.services.all %}
+    <article class="service-block" id="{{ service.slug }}">
+      <div class="service-block-heading">
+        <span class="service-index">0{{ forloop.counter }}</span>
+        <div><span class="eyebrow">{{ platform.name }}</span><h2>{{ service.name }}</h2><p>{{ service.description }}</p></div>
+      </div>
+      <div class="package-selector" aria-label="Escolha um pacote de {{ service.name }}">
+        {% for package in service.packages.all %}
+          <a
+            class="package-card {% if package.featured %}featured{% endif %}"
+            href="{{ package.get_absolute_url }}"
+            aria-label="Escolher {{ package.name }} por R$ {{ package.price_brl|floatformat:2 }}"
+          >
+            {% if package.featured %}<span class="popular">Mais vendido</span>{% elif forloop.last %}<span class="popular discount">Melhor valor</span>{% endif %}
+            <strong class="package-quantity">{{ package.formatted_quantity }}</strong>
+            <span class="package-label">{{ package.name }}</span>
+            <span class="package-price">R$ {{ package.price_brl|floatformat:2 }}</span>
+            <span class="package-action">Escolher pacote</span>
+          </a>
+        {% empty %}
+          <div class="coming-soon"><strong>Em breve</strong><span>Estamos preparando os primeiros pacotes desta categoria.</span></div>
+        {% endfor %}
+      </div>
+    </article>
+  {% endfor %}
+</section>
+{% endblock %}

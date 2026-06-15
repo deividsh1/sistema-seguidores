@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Serviços digitais para Instagram e TikTok | WebMaster{% endblock %}
+{% block meta_description %}Conheça pacotes de incremento de métricas para Instagram e TikTok, sem senha e com pedido rastreável.{% endblock %}
+{% block content %}
+<section class="hero hero-centered ad-safe-hero">
+  <div class="container">
+    <div class="hero-copy mx-auto">
+      <span class="eyebrow">WebMaster para presença social</span>
+      <h1>Serviços digitais para <span class="gradient-text">Instagram e TikTok</span></h1>
+      <p>Pacotes de incremento de métricas com informações claras, pagamento via Pix e acompanhamento pelo código do pedido.</p>
+      <div class="hero-actions">
+        <a class="btn btn-dark btn-pill" href="{% url 'store:instagram' %}">Ver pacotes para Instagram</a>
+        <a class="btn btn-dark btn-pill" href="{% url 'store:tiktok' %}">Ver pacotes para TikTok</a>
+      </div>
+      <div class="trust-seals">
+        <span><b>&#10003;</b> Sem senha</span>
+        <span><b>&#10003;</b> Pagamento via Pix</span>
+        <span><b>&#10003;</b> Pedido rastreável</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-space bg-soft">
+  <div class="container">
+    <div class="section-heading text-center">
+      <span class="eyebrow">Como funciona</span>
+      <h2>Uma jornada simples e transparente</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4"><div class="benefit-card"><b>01</b><h3>Escolha o pacote</h3><p>Confira quantidade, descrição e preço antes de seguir para o checkout.</p></div></div>
+      <div class="col-md-6 col-lg-4"><div class="benefit-card"><b>02</b><h3>Informe o perfil público</h3><p>Não solicitamos senha. O perfil ou conteúdo precisa permanecer público.</p></div></div>
+      <div class="col-md-6 col-lg-4"><div class="benefit-card"><b>03</b><h3>Acompanhe o pedido</h3><p>Depois do Pix confirmado, consulte o andamento com seu código e contato.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-space">
+  <div class="container">
+    <div class="section-heading text-center">
+      <span class="eyebrow">Plataformas disponíveis</span>
+      <h2>Escolha onde deseja começar</h2>
+    </div>
+    <div class="row g-4">
+      {% for platform in platforms %}
+        <div class="col-md-6">
+          <a class="platform-card platform-{{ platform.slug }}" href="{{ platform.get_absolute_url }}">
+            <span class="platform-number">0{{ forloop.counter }}</span>
+            <div><h3>{{ platform.name }}</h3><p>Consulte os serviços e pacotes disponíveis para {{ platform.name }}.</p><strong>Ver pacotes &rarr;</strong></div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="container section-space">
+  <div class="final-cta">
+    <span class="eyebrow">Informações antes da compra</span>
+    <h2>Sem senha, com termos claros e suporte disponível.</h2>
+    <p class="text-white-50 mx-auto ad-safe-copy">Os resultados e prazos podem variar conforme o serviço e as condições da plataforma. Leia a descrição do pacote e os Termos de Uso.</p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap mt-4">
+      <a class="btn btn-light btn-pill" href="{% url 'store:terms' %}">Ler Termos de Uso</a>
+      <a class="btn btn-outline-light btn-pill" href="{% url 'store:order_lookup' %}">Consultar pedido</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

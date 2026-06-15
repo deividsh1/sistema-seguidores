@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}WebMaster | Serviços digitais para presença social{% endblock %}
+{% block meta_description %}Pacotes para Instagram e TikTok, sem senha, com pagamento via Pix e pedido rastreável.{% endblock %}
+{% block content %}
+<section class="hero hero-centered">
+  <div class="container">
+    <div class="hero-copy mx-auto">
+      <span class="eyebrow">Serviços digitais com acompanhamento</span>
+      <h1>Pacotes para sua presença nas <span class="gradient-text">redes sociais</span></h1>
+      <p>Escolha opções de incremento de métricas para Instagram e TikTok, confirme o perfil e acompanhe cada etapa.</p>
+      <div class="hero-actions">
+        <a class="btn btn-dark btn-pill" href="{% url 'store:instagram' %}">Comprar para Instagram</a>
+        <a class="btn btn-dark btn-pill" href="{% url 'store:tiktok' %}">Comprar para TikTok</a>
+      </div>
+      <div class="trust-seals">
+        <span><b>&#10003;</b> Não pedimos sua senha</span>
+        <span><b>&#10003;</b> Pagamento seguro via Pix</span>
+        <span><b>&#10003;</b> Pedido rastreável</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-space">
+  <div class="container">
+    <div class="section-heading text-center"><span class="eyebrow">Escolha sua plataforma</span><h2>Pacotes feitos para o seu momento</h2></div>
+    <div class="row g-4">
+      {% for platform in platforms %}
+        <div class="col-md-6">
+          <a class="platform-card platform-{{ platform.slug }}" href="{{ platform.get_absolute_url }}">
+            <span class="platform-number">0{{ forloop.counter }}</span>
+            <div><h3>{{ platform.name }}</h3><p>{{ platform.description }}</p><strong>Ver todos os pacotes &rarr;</strong></div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section-space bg-soft">
+  <div class="container">
+    <div class="section-heading text-center"><span class="eyebrow">Compra com informações claras</span><h2>Do pacote ao acompanhamento, sem complicação</h2></div>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4"><div class="benefit-card"><b>01</b><h3>Não pedimos sua senha</h3><p>Você informa somente o link ou @ necessário para o serviço escolhido.</p></div></div>
+      <div class="col-md-6 col-lg-4"><div class="benefit-card"><b>02</b><h3>Pagamento seguro via Pix</h3><p>A cobrança é gerada no checkout e o processamento começa após a confirmação.</p></div></div>
+      <div class="col-md-6 col-lg-4"><div class="benefit-card"><b>03</b><h3>Suporte no WhatsApp</h3><p>O canal de suporte fica disponível durante a navegação e após o pedido.</p></div></div>
+      <div class="col-md-6 col-lg-4"><div class="benefit-card"><b>04</b><h3>Entrega após confirmação</h3><p>O pedido só segue para processamento depois do pagamento aprovado.</p></div></div>
+      <div class="col-md-6 col-lg-4"><div class="benefit-card"><b>05</b><h3>Perfil precisa estar público</h3><p>Mantenha o perfil ou conteúdo público enquanto o pedido é processado.</p></div></div>
+      <div class="col-md-6 col-lg-4"><div class="benefit-card"><b>06</b><h3>Termos claros e pedido rastreável</h3><p>Consulte o status usando o código do pedido e o contato informado.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-space">
+  <div class="container faq-width">
+    <div class="section-heading text-center"><span class="eyebrow">Perguntas frequentes</span><h2>Antes de começar</h2></div>
+    <div class="accordion" id="faq">
+      <div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#faq1">Meu perfil precisa estar público?</button></h3><div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faq"><div class="accordion-body">Sim. O perfil e o conteúdo precisam permanecer públicos durante o processamento.</div></div></div>
+      <div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq2">Vocês precisam da minha senha?</button></h3><div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">Não. A WebMaster nunca solicita senha. Você informa somente o @ ou link público correto.</div></div></div>
+      <div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#faq3">Como acompanho o pedido?</button></h3><div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">Use o código do pedido e o mesmo WhatsApp ou email informado na compra.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="container section-space"><div class="final-cta"><span class="eyebrow">Pronto para começar?</span><h2>Escolha sua rede e encontre o pacote ideal.</h2><div class="d-flex gap-3 justify-content-center flex-wrap mt-4"><a class="btn btn-light btn-pill" href="{% url 'store:instagram' %}">Instagram</a><a class="btn btn-outline-light btn-pill" href="{% url 'store:tiktok' %}">TikTok</a></div></div></section>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Pagamento {{ order.code }} | WebMaster{% endblock %}
+
+{% block content %}
+<section class="payment-v2-section">
+  <div class="container">
+    <div class="payment-v2-shell">
+      <header class="payment-v2-heading">
+        <div>
+          <span class="payment-v2-eyebrow">Pedido {{ order.code }}</span>
+          <h1>Pagamento via Pix</h1>
+        </div>
+        <p>Use o QR Code ou copie o código abaixo.</p>
+      </header>
+
+      <div class="payment-v2-grid">
+        <div class="payment-v2-card payment-v2-main">
+          <div class="payment-v2-top">
+            <div class="payment-v2-brand">
+              <span class="pix-mark">Pix</span>
+            </div>
+
+            <div class="payment-v2-amount">
+              <span>Total</span>
+              <strong>R$ {{ order.amount_brl }}</strong>
+            </div>
+          </div>
+
+          {% if order.payment_status == "paid" %}
+            <div class="payment-v2-state payment-v2-state-approved">
+              <span>Status do pedido</span>
+              <strong>Pagamento aprovado</strong>
+              <small>Seu pedido entrou em processamento.</small>
+            </div>
+
+          {% elif payment_log %}
+            <div class="payment-v2-state">
+              <span>Status do pedido</span>
+              <strong>Aguardando pagamento</strong>
+            </div>
+
+            {% if payment_log.qr_code_base64 %}
+              <div class="payment-v2-qr-wrap">
+                <img class="payment-v2-qr" src="data:image/png;base64,{{ payment_log.qr_code_base64 }}" alt="QR Code Pix">
+              </div>
+            {% endif %}
+
+            <div class="payment-v2-copy">
+              <div class="payment-v2-copy-head">
+                <label for="pix-code">Pix copia e cola</label>
+                <span>Use no app do banco</span>
+              </div>
+
+              <textarea id="pix-code" readonly rows="3" aria-label="Código Pix copia e cola">{{ payment_log.pix_code }}</textarea>
+            </div>
+
+            <button id="copy-pix" class="payment-v2-copy-button" type="button">
+              Copiar Pix
+            </button>
+
+            <p class="payment-v2-note">
+              Pague no app do seu banco. A confirmação é automática.
+            </p>
+
+          {% else %}
+            <div class="payment-v2-state payment-v2-state-warning">
+              <span>Status do pedido</span>
+              <strong>Cobrança indisponível</strong>
+              <small>Consulte o pedido pelo código acima.</small>
+            </div>
+          {% endif %}
+        </div>
+
+        <aside class="payment-v2-card payment-v2-summary" aria-label="Resumo do pedido">
+          <div class="payment-v2-summary-head">
+            <span>Resumo do pedido</span>
+            <strong>{{ order.code }}</strong>
+          </div>
+
+          <div class="payment-v2-summary-body">
+            {% for item in order.items.all %}
+              <div class="payment-v2-product">
+                <div>
+                  <strong>{{ item.package_name }}</strong>
+                  <span>{{ item.service_name }}</span>
+                </div>
+                <b>R$ {{ item.total_amount }}</b>
+              </div>
+            {% endfor %}
+
+            <div class="payment-v2-total">
+              <span>Total a pagar</span>
+              <strong>R$ {{ order.amount_brl }}</strong>
+            </div>
+
+            <div class="payment-v2-secure-note">
+              Pagamento processado via Mercado Pago.
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const copyButton = document.getElementById("copy-pix");
+    const pixInput = document.getElementById("pix-code");
+
+    if (copyButton && pixInput) {
+      copyButton.addEventListener("click", async function () {
+        const originalText = copyButton.textContent.trim();
+
+        try {
+          await navigator.clipboard.writeText(pixInput.value.trim());
+        } catch (error) {
+          pixInput.select();
+          document.execCommand("copy");
+        }
+
+        copyButton.textContent = "Pix copiado";
+        copyButton.classList.add("is-copied");
+
+        setTimeout(function () {
+          copyButton.textContent = originalText;
+          copyButton.classList.remove("is-copied");
+        }, 2000);
+      });
+    }
+
+    {% if order.payment_status != "paid" %}
+      setTimeout(function () {
+        window.location.reload();
+      }, 20000);
+    {% endif %}
+  });
+</script>
+{% endblock %}

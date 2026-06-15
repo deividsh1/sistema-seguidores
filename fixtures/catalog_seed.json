@@ -1,0 +1,695 @@
+[
+{
+  "model": "store.platform",
+  "pk": 1,
+  "fields": {
+    "name": "Instagram",
+    "slug": "instagram",
+    "description": "Pacotes para fortalecer sua presença no Instagram.",
+    "active": true,
+    "position": 1
+  }
+},
+{
+  "model": "store.platform",
+  "pk": 2,
+  "fields": {
+    "name": "TikTok",
+    "slug": "tiktok",
+    "description": "Pacotes de crescimento para seu perfil no TikTok.",
+    "active": true,
+    "position": 2
+  }
+},
+{
+  "model": "store.service",
+  "pk": 1,
+  "fields": {
+    "platform": 1,
+    "name": "Seguidores Instagram",
+    "slug": "seguidores-instagram",
+    "description": "Seguidores internacionais e nacionais, com início a partir de 10 minutos após a confirmação do pagamento. Não pedimos sua senha.",
+    "provider_service_id": "9142",
+    "min_quantity": null,
+    "max_quantity": null,
+    "requires_comments": false,
+    "active": true,
+    "position": 1
+  }
+},
+{
+  "model": "store.service",
+  "pk": 4,
+  "fields": {
+    "platform": 2,
+    "name": "Seguidores TikTok",
+    "slug": "seguidores",
+    "description": "Seguidores para TikTok, com início a partir de 10 minutos após confirmação do pagamento.",
+    "provider_service_id": "9542",
+    "min_quantity": null,
+    "max_quantity": null,
+    "requires_comments": false,
+    "active": true,
+    "position": 1
+  }
+},
+{
+  "model": "store.service",
+  "pk": 2,
+  "fields": {
+    "platform": 1,
+    "name": "Curtidas Instagram",
+    "slug": "curtidas-instagram",
+    "description": "Curtidas para publicações do Instagram, com início a partir de 5 minutos após a confirmação do pagamento.",
+    "provider_service_id": "10635",
+    "min_quantity": null,
+    "max_quantity": null,
+    "requires_comments": false,
+    "active": true,
+    "position": 2
+  }
+},
+{
+  "model": "store.service",
+  "pk": 5,
+  "fields": {
+    "platform": 2,
+    "name": "Curtidas TikTok",
+    "slug": "curtidas",
+    "description": "Curtidas para vídeos do TikTok, com início a partir de 5 minutos após confirmação do pagamento.",
+    "provider_service_id": "10466",
+    "min_quantity": null,
+    "max_quantity": null,
+    "requires_comments": false,
+    "active": true,
+    "position": 2
+  }
+},
+{
+  "model": "store.service",
+  "pk": 3,
+  "fields": {
+    "platform": 1,
+    "name": "Visualizações Instagram Reels",
+    "slug": "visualizacoes-instagram-reels",
+    "description": "Visualizações para Reels do Instagram, com entrega rápida após aprovação do pagamento.",
+    "provider_service_id": "8061",
+    "min_quantity": null,
+    "max_quantity": null,
+    "requires_comments": false,
+    "active": true,
+    "position": 3
+  }
+},
+{
+  "model": "store.service",
+  "pk": 6,
+  "fields": {
+    "platform": 2,
+    "name": "Visualizações TikTok",
+    "slug": "visualizacoes",
+    "description": "Visualizações para vídeos do TikTok, com entrega rápida após confirmação do pagamento.",
+    "provider_service_id": "10641",
+    "min_quantity": null,
+    "max_quantity": null,
+    "requires_comments": false,
+    "active": true,
+    "position": 3
+  }
+},
+{
+  "model": "store.service",
+  "pk": 10,
+  "fields": {
+    "platform": 1,
+    "name": "Comentários Personalizados Instagram",
+    "slug": "comentarios-personalizados-instagram",
+    "description": "Comentários personalizados para fotos e vídeos do Instagram. Escreva um comentário por linha no checkout. Início a partir de 1 hora após a confirmação do pagamento.",
+    "provider_service_id": "1723",
+    "min_quantity": null,
+    "max_quantity": null,
+    "requires_comments": true,
+    "active": true,
+    "position": 4
+  }
+},
+{
+  "model": "store.package",
+  "pk": 43,
+  "fields": {
+    "service": 10,
+    "name": "5 Comentários Personalizados",
+    "quantity": 5,
+    "price_brl": "5.90",
+    "active": true,
+    "featured": false,
+    "position": 1
+  }
+},
+{
+  "model": "store.package",
+  "pk": 10,
+  "fields": {
+    "service": 4,
+    "name": "100 Seguidores TikTok",
+    "quantity": 100,
+    "price_brl": "14.90",
+    "active": true,
+    "featured": false,
+    "position": 1
+  }
+},
+{
+  "model": "store.package",
+  "pk": 13,
+  "fields": {
+    "service": 5,
+    "name": "100 Curtidas TikTok",
+    "quantity": 100,
+    "price_brl": "8.90",
+    "active": true,
+    "featured": false,
+    "position": 1
+  }
+},
+{
+  "model": "store.package",
+  "pk": 35,
+  "fields": {
+    "service": 2,
+    "name": "250 Curtidas",
+    "quantity": 250,
+    "price_brl": "4.90",
+    "active": true,
+    "featured": false,
+    "position": 1
+  }
+},
+{
+  "model": "store.package",
+  "pk": 2,
+  "fields": {
+    "service": 1,
+    "name": "500 Seguidores Mundiais",
+    "quantity": 500,
+    "price_brl": "12.90",
+    "active": true,
+    "featured": false,
+    "position": 1
+  }
+},
+{
+  "model": "store.package",
+  "pk": 16,
+  "fields": {
+    "service": 6,
+    "name": "1.000 Visualizações TikTok",
+    "quantity": 1000,
+    "price_brl": "14.90",
+    "active": true,
+    "featured": false,
+    "position": 1
+  }
+},
+{
+  "model": "store.package",
+  "pk": 39,
+  "fields": {
+    "service": 3,
+    "name": "3.000 Visualizações em Reels",
+    "quantity": 3000,
+    "price_brl": "6.18",
+    "active": true,
+    "featured": false,
+    "position": 1
+  }
+},
+{
+  "model": "store.package",
+  "pk": 44,
+  "fields": {
+    "service": 10,
+    "name": "10 Comentários Personalizados",
+    "quantity": 10,
+    "price_brl": "10.90",
+    "active": true,
+    "featured": true,
+    "position": 2
+  }
+},
+{
+  "model": "store.package",
+  "pk": 5,
+  "fields": {
+    "service": 2,
+    "name": "500 Curtidas",
+    "quantity": 500,
+    "price_brl": "7.90",
+    "active": true,
+    "featured": true,
+    "position": 2
+  }
+},
+{
+  "model": "store.package",
+  "pk": 11,
+  "fields": {
+    "service": 4,
+    "name": "500 Seguidores TikTok",
+    "quantity": 500,
+    "price_brl": "49.90",
+    "active": true,
+    "featured": true,
+    "position": 2
+  }
+},
+{
+  "model": "store.package",
+  "pk": 14,
+  "fields": {
+    "service": 5,
+    "name": "500 Curtidas TikTok",
+    "quantity": 500,
+    "price_brl": "24.90",
+    "active": true,
+    "featured": true,
+    "position": 2
+  }
+},
+{
+  "model": "store.package",
+  "pk": 3,
+  "fields": {
+    "service": 1,
+    "name": "1.000 Seguidores Mundiais",
+    "quantity": 1000,
+    "price_brl": "17.90",
+    "active": true,
+    "featured": true,
+    "position": 2
+  }
+},
+{
+  "model": "store.package",
+  "pk": 8,
+  "fields": {
+    "service": 3,
+    "name": "5.000 Visualizações em Reels",
+    "quantity": 5000,
+    "price_brl": "10.00",
+    "active": true,
+    "featured": true,
+    "position": 2
+  }
+},
+{
+  "model": "store.package",
+  "pk": 17,
+  "fields": {
+    "service": 6,
+    "name": "5.000 Visualizações TikTok",
+    "quantity": 5000,
+    "price_brl": "39.90",
+    "active": true,
+    "featured": true,
+    "position": 2
+  }
+},
+{
+  "model": "store.package",
+  "pk": 45,
+  "fields": {
+    "service": 10,
+    "name": "20 Comentários Personalizados",
+    "quantity": 20,
+    "price_brl": "20.90",
+    "active": true,
+    "featured": false,
+    "position": 3
+  }
+},
+{
+  "model": "store.package",
+  "pk": 6,
+  "fields": {
+    "service": 2,
+    "name": "1.000 Curtidas",
+    "quantity": 1000,
+    "price_brl": "12.90",
+    "active": true,
+    "featured": false,
+    "position": 3
+  }
+},
+{
+  "model": "store.package",
+  "pk": 12,
+  "fields": {
+    "service": 4,
+    "name": "1.000 Seguidores TikTok",
+    "quantity": 1000,
+    "price_brl": "79.90",
+    "active": true,
+    "featured": false,
+    "position": 3
+  }
+},
+{
+  "model": "store.package",
+  "pk": 15,
+  "fields": {
+    "service": 5,
+    "name": "1.000 Curtidas TikTok",
+    "quantity": 1000,
+    "price_brl": "39.90",
+    "active": true,
+    "featured": false,
+    "position": 3
+  }
+},
+{
+  "model": "store.package",
+  "pk": 19,
+  "fields": {
+    "service": 1,
+    "name": "2.000 Seguidores Mundiais",
+    "quantity": 2000,
+    "price_brl": "32.90",
+    "active": true,
+    "featured": false,
+    "position": 3
+  }
+},
+{
+  "model": "store.package",
+  "pk": 9,
+  "fields": {
+    "service": 3,
+    "name": "10.000 Visualizações em Reels",
+    "quantity": 10000,
+    "price_brl": "14.00",
+    "active": true,
+    "featured": false,
+    "position": 3
+  }
+},
+{
+  "model": "store.package",
+  "pk": 18,
+  "fields": {
+    "service": 6,
+    "name": "10.000 Visualizações TikTok",
+    "quantity": 10000,
+    "price_brl": "69.90",
+    "active": true,
+    "featured": false,
+    "position": 3
+  }
+},
+{
+  "model": "store.package",
+  "pk": 46,
+  "fields": {
+    "service": 10,
+    "name": "30 Comentários Personalizados",
+    "quantity": 30,
+    "price_brl": "30.90",
+    "active": true,
+    "featured": false,
+    "position": 4
+  }
+},
+{
+  "model": "store.package",
+  "pk": 25,
+  "fields": {
+    "service": 4,
+    "name": "2.000 Seguidores TikTok",
+    "quantity": 2000,
+    "price_brl": "149.90",
+    "active": true,
+    "featured": false,
+    "position": 4
+  }
+},
+{
+  "model": "store.package",
+  "pk": 27,
+  "fields": {
+    "service": 5,
+    "name": "2.000 Curtidas TikTok",
+    "quantity": 2000,
+    "price_brl": "69.90",
+    "active": true,
+    "featured": false,
+    "position": 4
+  }
+},
+{
+  "model": "store.package",
+  "pk": 36,
+  "fields": {
+    "service": 2,
+    "name": "2.200 Curtidas",
+    "quantity": 2200,
+    "price_brl": "18.99",
+    "active": true,
+    "featured": false,
+    "position": 4
+  }
+},
+{
+  "model": "store.package",
+  "pk": 31,
+  "fields": {
+    "service": 1,
+    "name": "3.000 Seguidores Mundiais",
+    "quantity": 3000,
+    "price_brl": "44.90",
+    "active": true,
+    "featured": false,
+    "position": 4
+  }
+},
+{
+  "model": "store.package",
+  "pk": 40,
+  "fields": {
+    "service": 3,
+    "name": "20.000 Visualizações em Reels",
+    "quantity": 20000,
+    "price_brl": "25.00",
+    "active": true,
+    "featured": false,
+    "position": 4
+  }
+},
+{
+  "model": "store.package",
+  "pk": 29,
+  "fields": {
+    "service": 6,
+    "name": "50.000 Visualizações TikTok",
+    "quantity": 50000,
+    "price_brl": "149.90",
+    "active": true,
+    "featured": false,
+    "position": 4
+  }
+},
+{
+  "model": "store.package",
+  "pk": 47,
+  "fields": {
+    "service": 10,
+    "name": "50 Comentários Personalizados",
+    "quantity": 50,
+    "price_brl": "44.90",
+    "active": true,
+    "featured": false,
+    "position": 5
+  }
+},
+{
+  "model": "store.package",
+  "pk": 37,
+  "fields": {
+    "service": 2,
+    "name": "3.000 Curtidas",
+    "quantity": 3000,
+    "price_brl": "24.99",
+    "active": true,
+    "featured": false,
+    "position": 5
+  }
+},
+{
+  "model": "store.package",
+  "pk": 20,
+  "fields": {
+    "service": 1,
+    "name": "5.000 Seguidores Mundiais",
+    "quantity": 5000,
+    "price_brl": "84.90",
+    "active": true,
+    "featured": false,
+    "position": 5
+  }
+},
+{
+  "model": "store.package",
+  "pk": 26,
+  "fields": {
+    "service": 4,
+    "name": "5.000 Seguidores TikTok",
+    "quantity": 5000,
+    "price_brl": "299.90",
+    "active": true,
+    "featured": false,
+    "position": 5
+  }
+},
+{
+  "model": "store.package",
+  "pk": 28,
+  "fields": {
+    "service": 5,
+    "name": "5.000 Curtidas TikTok",
+    "quantity": 5000,
+    "price_brl": "139.90",
+    "active": true,
+    "featured": false,
+    "position": 5
+  }
+},
+{
+  "model": "store.package",
+  "pk": 23,
+  "fields": {
+    "service": 3,
+    "name": "50.000 Visualizações em Reels",
+    "quantity": 50000,
+    "price_brl": "35.90",
+    "active": true,
+    "featured": false,
+    "position": 5
+  }
+},
+{
+  "model": "store.package",
+  "pk": 30,
+  "fields": {
+    "service": 6,
+    "name": "100.000 Visualizações TikTok",
+    "quantity": 100000,
+    "price_brl": "249.90",
+    "active": true,
+    "featured": false,
+    "position": 5
+  }
+},
+{
+  "model": "store.package",
+  "pk": 48,
+  "fields": {
+    "service": 10,
+    "name": "100 Comentários Personalizados",
+    "quantity": 100,
+    "price_brl": "79.90",
+    "active": true,
+    "featured": false,
+    "position": 6
+  }
+},
+{
+  "model": "store.package",
+  "pk": 22,
+  "fields": {
+    "service": 2,
+    "name": "5.000 Curtidas",
+    "quantity": 5000,
+    "price_brl": "39.99",
+    "active": true,
+    "featured": false,
+    "position": 6
+  }
+},
+{
+  "model": "store.package",
+  "pk": 32,
+  "fields": {
+    "service": 1,
+    "name": "10.000 Seguidores Mundiais",
+    "quantity": 10000,
+    "price_brl": "129.90",
+    "active": true,
+    "featured": false,
+    "position": 6
+  }
+},
+{
+  "model": "store.package",
+  "pk": 24,
+  "fields": {
+    "service": 3,
+    "name": "100.000 Visualizações em Reels",
+    "quantity": 100000,
+    "price_brl": "55.90",
+    "active": true,
+    "featured": false,
+    "position": 6
+  }
+},
+{
+  "model": "store.package",
+  "pk": 33,
+  "fields": {
+    "service": 1,
+    "name": "20.000 Seguidores Mundiais",
+    "quantity": 20000,
+    "price_brl": "249.00",
+    "active": true,
+    "featured": false,
+    "position": 7
+  }
+},
+{
+  "model": "store.package",
+  "pk": 41,
+  "fields": {
+    "service": 3,
+    "name": "500.000 Visualizações em Reels",
+    "quantity": 500000,
+    "price_brl": "99.90",
+    "active": true,
+    "featured": false,
+    "position": 7
+  }
+},
+{
+  "model": "store.package",
+  "pk": 34,
+  "fields": {
+    "service": 1,
+    "name": "30.000 Seguidores Mundiais",
+    "quantity": 30000,
+    "price_brl": "359.90",
+    "active": true,
+    "featured": false,
+    "position": 8
+  }
+},
+{
+  "model": "store.package",
+  "pk": 42,
+  "fields": {
+    "service": 3,
+    "name": "1.000.000 Visualizações em Reels",
+    "quantity": 1000000,
+    "price_brl": "139.99",
+    "active": true,
+    "featured": false,
+    "position": 8
+  }
+}
+]

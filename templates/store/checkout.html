@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+{% block title %}Checkout | WebMaster{% endblock %}
+
+{% block content %}
+<div class="container checkout-space">
+  <form
+    method="post"
+    novalidate
+    id="checkout-form"
+    data-base-price="{{ package.price_brl|stringformat:'f' }}"
+    data-profile-platform="{{ package.service.platform.slug }}"
+    data-target-kind="{{ form.target_config.kind }}"
+  >
+    {% csrf_token %}
+
+    {% if form.errors %}
+      <div class="alert alert-danger" role="alert">
+        <strong>Não foi possível finalizar o pedido.</strong>
+        <div>Revise os campos destacados abaixo e tente novamente.</div>
+        <ul class="mb-0 mt-2">
+          {% for field in form %}
+            {% for error in field.errors %}
+              <li>{{ field.label }}: {{ error }}</li>
+            {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <div class="checkout-topbar">
+      <div>
+        <span class="notice-icon">!</span>
+        <strong>Perfil público = entrega sem atraso.</strong>
+      </div>
+      <a href="{% url 'store:how_to_order' %}">Guia rápido</a>
+    </div>
+
+    {% if sibling_packages|length > 1 %}
+      <details class="checkout-package-picker">
+        <summary class="checkout-package-summary">
+          <div>
+            <span>Pacote selecionado</span>
+            <strong>{{ package.formatted_quantity }} {{ package.service.name }}</strong>
+          </div>
+          <b>R$ {{ package.price_brl|floatformat:2 }}</b>
+          <span class="checkout-package-change" title="Alterar pacote">Alterar</span>
+        </summary>
+        <div class="checkout-package-panel">
+          <strong>Escolha outro pacote</strong>
+          <div class="checkout-package-options">
+            {% for option in sibling_packages %}
+              <a
+                class="checkout-package-option {% if option.pk == package.pk %}is-current{% endif %}"
+                href="{{ option.get_absolute_url }}"
+                {% if option.pk == package.pk %}aria-current="true"{% endif %}
+              >
+                {% if option.featured %}<span>Mais vendido</span>{% endif %}
+                <strong>{{ option.formatted_quantity }}</strong>
+                <small>R$ {{ option.price_brl|floatformat:2 }}</small>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      </details>
+    {% else %}
+      <div class="checkout-package-picker checkout-package-static" aria-label="Pacote selecionado">
+        <div class="checkout-package-summary">
+          <div>
+            <span>Pacote selecionado</span>
+            <strong>{{ package.formatted_quantity }} {{ package.service.name }}</strong>
+          </div>
+          <b>R$ {{ package.price_brl|floatformat:2 }}</b>
+        </div>
+      </div>
+    {% endif %}
+
+
+    <div class="checkout-layout">
+      <section class="checkout-main">
+
+        <div class="mobile-order-card">
+          <span class="eyebrow">{{ package.service.platform.name }} · {{ package.service.name }}</span>
+          <strong>{{ package.formatted_quantity }}</strong>
+          <span>{{ package.name }}</span>
+          <div>
+            <span>Total inicial</span>
+            <b>R$ {{ package.price_brl|floatformat:2 }}</b>
+          </div>
+        </div>
+
+        <div class="checkout-card" id="checkout-help">
+          <h1>Finalize seu pedido</h1>
+          <p class="checkout-card-intro">
+            Preencha os dados abaixo. Não pedimos senha.
+          </p>
+{% for error in form.non_field_errors %}
+            <div class="alert alert-danger">{{ error }}</div>
+          {% endfor %}
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold" for="{{ form.target.id_for_label }}">
+              {{ form.target.label }}
+            </label>
+
+            <div class="target-input-wrap">
+              {{ form.target }}
+              <span class="target-input-status" aria-hidden="true"></span>
+            </div>
+            <div class="form-text">{{ form.target.help_text }}</div>
+
+            {% for error in form.target.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="target-status" id="profile-warning" aria-live="polite">
+            <span class="target-status-text">Informe o @ ou link do perfil. O perfil precisa estar público para receber o pedido.</span>
+          </div>
+
+          {% if package.service.requires_comments %}
+            <div class="mb-3">
+              <label class="form-label fw-semibold" for="{{ form.comments_text.id_for_label }}">
+                Comentários personalizados
+              </label>
+              <p class="text-secondary small">
+                Escreva exatamente {{ package.quantity }} comentário(s), um por linha.
+              </p>
+
+              {{ form.comments_text }}
+
+              {% for error in form.comments_text.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div class="checkout-contact-grid">
+            <div class="mb-3">
+              <label class="form-label fw-semibold" for="{{ form.email.id_for_label }}">
+                Email <span class="required-label">obrigatório</span>
+              </label>
+
+              {{ form.email }}
+              <div class="form-text">Para atualizações e consulta.</div>
+
+              {% for error in form.email.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold" for="{{ form.whatsapp.id_for_label }}">
+                WhatsApp <span class="required-label">obrigatório</span>
+              </label>
+
+              {{ form.whatsapp }}
+              <div class="form-text">Para suporte e consulta.</div>
+
+              {% for error in form.whatsapp.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="payment-method">
+            <span>
+              <b>Pagamento via Pix</b>
+            </span>
+            <strong>Pix</strong>
+          </div>
+
+          <div class="confirmations">
+            {{ form.confirm_public_profile }}
+
+            <div class="form-check">
+              {{ form.accept_terms }}
+              <label class="form-check-label" for="{{ form.accept_terms.id_for_label }}">
+                Concordo com os <a href="{% url 'store:terms' %}" target="_blank" rel="noopener">Termos de Uso</a>.
+              </label>
+
+              {% for error in form.accept_terms.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        {% if upsell_packages %}
+          <div class="checkout-card upsell-section">
+            <span class="eyebrow">Adicionais recomendados</span>
+            <h2>Complete seu pedido</h2>
+            <p class="text-secondary">
+              Adicione curtidas ou visualizações ao mesmo pedido.
+            </p>
+
+            <div class="upsell-list">
+              {% regroup upsell_packages by service_id as upsell_service_groups %}
+              {% for service_group in upsell_service_groups %}
+                {% with upsell=service_group.list.0 %}
+                  <div class="upsell-card-wrapper">
+                  <label class="upsell-card">
+                    <input
+                      class="upsell-input"
+                      type="checkbox"
+                      name="upsells"
+                      value="{{ upsell.id }}"
+                      data-price="{{ upsell.price_brl|stringformat:'f' }}"
+                      data-label="{{ upsell.formatted_quantity }} {{ upsell.service.name }}"
+                      data-service-key="{{ upsell.service_id }}"
+                      data-service-name="{{ upsell.service.name }}"
+                      data-platform="{{ upsell.service.platform.slug }}"
+                      data-icon="{% if 'Curtidas' in upsell.service.name %}♥{% elif 'Visualizações' in upsell.service.name %}▶{% else %}+{% endif %}"
+                      {% if upsell.id|stringformat:"s" in selected_upsells %}checked{% endif %}
+                    >
+
+                    <span class="upsell-icon" aria-hidden="true">{% if "Curtidas" in upsell.service.name %}♥{% elif "Visualizações" in upsell.service.name %}▶{% else %}+{% endif %}</span>
+
+                    <span class="upsell-copy">
+                      <strong>{{ upsell.formatted_quantity }} {{ upsell.service.name }}</strong>
+                      <small>{{ upsell.service.platform.name }}</small>
+                    </span>
+
+                    <b>R$ {{ upsell.price_brl|floatformat:2 }}</b>
+                    <span class="upsell-toggle">Adicionar</span>
+                  </label>
+
+                  {% if "Curtidas" in upsell.service.name or "Visualizações" in upsell.service.name or "Comentários" in upsell.service.name %}
+                    <div class="upsell-target-input" style="display: none;">
+                      <label for="upsell-target-{{ upsell.id }}">
+                        {% if "Curtidas" in upsell.service.name %}
+                          Link da publicação
+                        {% elif "Visualizações" in upsell.service.name %}
+                          Link do Reels ou vídeo
+                        {% else %}
+                          Link da publicação ou Reels
+                        {% endif %}
+                      </label>
+
+                      <input
+                        type="text"
+                        id="upsell-target-{{ upsell.id }}"
+                        name="upsell_target_{{ upsell.id }}"
+                        class="form-control"
+                        placeholder="Cole o link da publicação ou Reels"
+                        maxlength="500"
+                        disabled
+                      >
+
+                      <small class="form-text">
+                        Este complemento precisa de um link próprio. Não use @ do perfil.
+                      </small>
+                    </div>
+                  {% endif %}
+                  </div>
+                {% endwith %}
+              {% endfor %}
+            </div>
+
+            {% for error in form.upsells.errors %}
+              <div class="text-danger small mt-2">{{ error }}</div>
+            {% endfor %}
+            <div class="upsell-feedback" id="upsell-feedback" aria-live="polite"></div>
+          </div>
+        {% endif %}
+
+        {% if form.bonus_options %}
+          <div class="checkout-card bonus-opt-section">
+            <span class="eyebrow bonus-opt-eyebrow">Adicionais opcionais</span>
+            <h2>Aumente seu alcance ainda mais</h2>
+            <div class="bonus-opt-list" id="bonus-opt-list">
+              {% for opt in form.bonus_options %}
+                <div class="bonus-opt-card-wrapper" data-bonus-idx="{{ opt.idx }}">
+                  <label class="bonus-opt-card" for="{{ opt.enabled_field.id_for_label }}">
+                    <span class="bonus-opt-icon" aria-hidden="true">
+                      {% if opt.kind == "profile" %}👤{% elif opt.kind == "likes" %}♥{% else %}▶{% endif %}
+                    </span>
+                    <span class="bonus-opt-copy">
+                      <strong>{{ opt.package.formatted_quantity }} {{ opt.package.service.name }}</strong>
+                      <small>{{ opt.package.service.platform.name }}</small>
+                    </span>
+                    <span class="bonus-opt-price" data-price="{{ opt.package.price_brl|stringformat:'f' }}">R$ {{ opt.package.price_brl|floatformat:2 }}</span>
+                    <span class="bonus-opt-toggle">Adicionar</span>
+                    {{ opt.enabled_field }}
+                  </label>
+
+                  <div class="bonus-opt-target-wrap" style="display:none;">
+                    <label class="bonus-opt-target-label" for="{{ opt.target_field.id_for_label }}">
+                      {{ opt.label }} <span class="required-label">obrigatório</span>
+                    </label>
+                    {{ opt.target_field }}
+                    {% for error in opt.target_field.errors %}
+                      <div class="text-danger small mt-1">{{ error }}</div>
+                    {% endfor %}
+                    <small class="form-text">Destino exclusivo para este brinde.</small>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+            <div class="bonus-opt-feedback" id="bonus-opt-feedback" aria-live="polite"></div>
+          </div>
+        {% endif %}
+      </section>
+
+      <aside class="order-summary">
+        <div class="summary-head">
+          <span>Pedido pronto para ativar</span>
+          {% if package.featured %}<em class="summary-offer-badge">Selecionado</em>{% endif %}
+          <strong>{{ package.formatted_quantity }}</strong>
+          <small>{{ package.service.name }} · {{ package.service.platform.name }}</small>
+        </div>
+
+        <div class="summary-items" id="summary-items">
+          <div class="summary-static-item">
+            <span>{{ package.formatted_quantity }} {{ package.service.name }}</span>
+            <b>R$ {{ package.price_brl|floatformat:2 }}</b>
+          </div>
+        </div>
+
+        <div class="summary-total">
+          <span>Total a pagar</span>
+          <strong id="checkout-total">R$ {{ package.price_brl|floatformat:2 }}</strong>
+        </div>
+
+        <div class="summary-trust">
+          <span>Não pedimos senha</span>
+          <span>Pagamento via Pix</span>
+</div>
+
+        <div class="order-summary-actions">
+          <button class="btn btn-dark btn-pill w-100" type="submit">Finalizar e gerar Pix</button>
+          <a class="btn btn-orders btn-pill w-100" href="{% url 'store:order_lookup' %}">Consultar pedido</a>
+        </div>
+      </aside>
+    </div>
+  </form>
+</div>
+{% endblock %}

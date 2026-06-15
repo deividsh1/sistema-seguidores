@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Pedido {{ order.code }} | WebMaster{% endblock %}
+{% block content %}
+<div class="container section-space text-center">
+  <div class="checkout-width mx-auto">
+    <div class="success-mark">&#10003;</div>
+    <span class="eyebrow">Pedido recebido</span>
+    <h1 class="mt-2">Obrigado por escolher a WebMaster.</h1>
+    <p class="lead text-secondary">Guarde o código para acompanhar o andamento.</p>
+    <div class="summary-card my-4"><span>Código do pedido</span><strong>{{ order.code }}</strong></div>
+    <div class="d-flex gap-2 justify-content-center flex-wrap">
+      <a class="btn btn-primary" href="{% url 'store:order_lookup' %}">Consultar pedido</a>
+      {% if whatsapp_order_url %}
+        <a class="btn btn-success" href="{{ whatsapp_order_url }}" target="_blank" rel="noopener noreferrer">Falar com suporte</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Consultar pedido | WebMaster{% endblock %}
+{% block content %}
+<div class="container section-space"><div class="checkout-width mx-auto">
+  <span class="eyebrow">Acompanhamento</span><h1 class="mt-2">Consultar pedido</h1><p class="text-secondary">Informe o código e o mesmo contato usado na compra.</p>
+  <form method="post" class="checkout-card my-4">{% csrf_token %}{% for field in form %}<div class="mb-3"><label class="form-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}</div>{% endfor %}<button class="btn btn-primary w-100">Consultar</button></form>
+  {% if order %}<div class="checkout-card order-result"><span class="eyebrow">{{ order.platform_name }}</span><h2 class="h5 mt-2">Pedido {{ order.code }}</h2>{% for item in order.items.all %}<div class="d-flex justify-content-between small border-bottom py-2"><span>{{ item.service_name }} · {{ item.quantity }}</span><strong>{{ item.get_fulfillment_status_display }}</strong></div>{% endfor %}<p class="mb-0 mt-3">Pagamento: {{ order.get_payment_status_display }}<br>Pedido: {{ order.get_fulfillment_status_display }}{% if order.provider_status %}<br>Andamento: {{ order.provider_status }}{% endif %}</p></div>{% elif searched and form.is_valid %}<div class="alert alert-warning">Pedido não encontrado com os dados informados.</div>{% endif %}
+</div></div>
+{% endblock %}
