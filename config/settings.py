@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "anymail",
     "store",
 ]
 
@@ -230,10 +231,14 @@ if DEBUG:
 else:
     EMAIL_BACKEND = os.getenv(
         "EMAIL_BACKEND",
-        "django.core.mail.backends.smtp.EmailBackend",
+        "anymail.backends.brevo.EmailBackend",
     )
     EMAIL_HOST = os.getenv("EMAIL_HOST", "")
     EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
     EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
     EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
     EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
+
+ANYMAIL = {
+    "BREVO_API_KEY": os.getenv("BREVO_API_KEY", ""),
+}
