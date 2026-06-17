@@ -16,4 +16,12 @@
     </div>
   </div>
 </div>
+
+{% if order.payment_status == 'paid' %}
+<script>
+  if (typeof fbq !== 'undefined') {
+    fbq('track', 'Purchase', {value: {{ order.amount_brl|stringformat:".2f" }}, currency: 'BRL'});
+  }
+</script>
+{% endif %}
 {% endblock %}
