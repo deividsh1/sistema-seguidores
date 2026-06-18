@@ -74,12 +74,12 @@ class SecurityHeadersMiddleware:
         response.headers.setdefault(
             "Content-Security-Policy",
             "default-src 'self'; "
-            "script-src 'self' https://cdn.jsdelivr.net; "
+            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://connect.facebook.net; "
             "style-src 'self' https://cdn.jsdelivr.net; "
             "style-src-attr 'unsafe-inline'; "
             "img-src 'self' data: https:; "
             "font-src 'self' data:; "
-            "connect-src 'self'; "
+            "connect-src 'self' https://connect.facebook.net https://www.facebook.com; "
             "frame-ancestors 'none'; object-src 'none'; base-uri 'self'; "
             "form-action 'self'",
         )
