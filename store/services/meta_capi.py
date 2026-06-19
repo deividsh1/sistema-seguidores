@@ -68,6 +68,16 @@ def send_purchase_event(order, test_event_code=None):
     if user_agent:
         user_data["client_user_agent"] = user_agent
 
+    # fbp/fbc: cookies do Meta capturados no checkout. Elevam o match
+    # quality e ligam a venda ao clique no anuncio (atribuicao).
+    fbp = getattr(order, "fb_fbp", "")
+    if fbp:
+        user_data["fbp"] = fbp
+
+    fbc = getattr(order, "fb_fbc", "")
+    if fbc:
+        user_data["fbc"] = fbc
+
     try:
         value = float(order.amount_brl)
     except (TypeError, ValueError):

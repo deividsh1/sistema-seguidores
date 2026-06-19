@@ -12,6 +12,8 @@
     data-target-kind="{{ form.target_config.kind }}"
   >
     {% csrf_token %}
+    <input type="hidden" name="fb_fbp" id="fb_fbp_field">
+    <input type="hidden" name="fb_fbc" id="fb_fbc_field">
 
     {% if form.errors %}
       <div class="alert alert-danger" role="alert">
@@ -338,3 +340,29 @@
   </form>
 </div>
 {% endblock %}
+
+<script>
+(function () {
+  function getCookie(name) {
+    var m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return m ? m.pop() : '';
+  }
+  function fillFbFields() {
+    var fbp = getCookie('_fbp');
+    var fbc = getCookie('_fbc');
+    // Se nao houver _fbc mas a URL trouxer fbclid, monta o _fbc manualmente
+    if (!fbc) {
+      var params = new URLSearchParams(window.location.search);
+      var fbclid = params.get('fbclid');
+      if (fbclid) {
+        fbc = 'fb.1.' + Math.floor(Date.now()) + '.' + fbclid;
+      }
+    }
+    var fp = document.getElementById('fb_fbp_field');
+    var fc = document.getElementById('fb_fbc_field');
+    if (fp) fp.value = fbp || '';
+    if (fc) fc.value = fbc || '';
+  }
+  fillFbFields();
+})();
+</script>

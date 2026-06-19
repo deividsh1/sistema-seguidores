@@ -92,6 +92,12 @@ def checkout(request, package_id):
 
         with transaction.atomic():
             order = form.save()
+            fbp = request.POST.get("fb_fbp", "")[:255]
+            fbc = request.POST.get("fb_fbc", "")[:255]
+            if fbp or fbc:
+                order.fb_fbp = fbp
+                order.fb_fbc = fbc
+                order.save(update_fields=("fb_fbp", "fb_fbc", "updated_at"))
         try:
             charge = create_pix_charge(order)
             order.external_payment_id = charge["id"]

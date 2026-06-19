@@ -229,6 +229,8 @@ class Order(models.Model):
     )
     customer_ip = models.GenericIPAddressField("IP do cliente", null=True, blank=True)
     customer_user_agent = models.CharField("user agent", max_length=500, blank=True)
+    fb_fbp = models.CharField("Meta _fbp", max_length=255, blank=True)
+    fb_fbc = models.CharField("Meta _fbc", max_length=255, blank=True)
 
     payment_status = models.CharField(
         "status do pagamento",
