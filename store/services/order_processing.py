@@ -180,6 +180,11 @@ def process_payment_notification(data):
         if should_send_approved_email:
             order.mark_paid()
             order.save(update_fields=("payment_status", "paid_at", "updated_at"))
+            try:
+                from store.services.meta_capi import send_purchase_event
+                send_purchase_event(order)
+            except Exception:
+                logger.exception("CAPI: falha ao enviar Purchase (pagamento nao afetado)")
         order_id = order.id
 
     if should_send_approved_email:
