@@ -42,57 +42,48 @@ def _hash_phone(value):
     return hashlib.sha256(digits.encode("utf-8")).hexdigest()
 
 
-def send_purchase_event(order, test_event_code=None):
+def _send_event(order, event_name, test_event_code=None):
     pixel_id = getattr(settings, "META_PIXEL_ID", "")
     token = getattr(settings, "META_CAPI_TOKEN", "")
-
     if not pixel_id or not token:
-        logger.warning("CAPI: META_PIXEL_ID ou META_CAPI_TOKEN ausente; evento nao enviado.")
+        logger.warning("CAPI: META_PIXEL_ID ou META_CAPI_TOKEN ausente; evento %s nao enviado.", event_name)
         return False
-
     user_data = {}
-
     email_hash = _hash(getattr(order, "email", ""))
     if email_hash:
         user_data["em"] = [email_hash]
-
     phone_hash = _hash_phone(getattr(order, "whatsapp", ""))
     if phone_hash:
         user_data["ph"] = [phone_hash]
-
     client_ip = getattr(order, "customer_ip", "")
     if client_ip:
         user_data["client_ip_address"] = client_ip
-
     user_agent = getattr(order, "customer_user_agent", "")
     if user_agent:
         user_data["client_user_agent"] = user_agent
-
-    # fbp/fbc: cookies do Meta capturados no checkout. Elevam o match
-    # quality e ligam a venda ao clique no anuncio (atribuicao).
     fbp = getattr(order, "fb_fbp", "")
     if fbp:
         user_data["fbp"] = fbp
-
     fbc = getattr(order, "fb_fbc", "")
     if fbc:
         user_data["fbc"] = fbc
-
     try:
         value = float(order.amount_brl)
     except (TypeError, ValueError):
         value = 0.0
-
     base_url = getattr(settings, "PUBLIC_BASE_URL", "") or ""
     event_source_url = None
     if base_url:
         event_source_url = base_url.rstrip("/") + "/pedido/" + str(order.code) + "/sucesso/"
-
+    # event_id distinto por tipo de evento, para nao colidir na deduplicacao
+    event_id = str(order.code) + "_" + event_name
+    if event_name == "Purchase":
+        event_id = str(order.code)  # Purchase mantem o code puro (dedup com pixel do navegador)
     event = {
-        "event_name": "Purchase",
+        "event_name": event_name,
         "event_time": int(time.time()),
         "action_source": "website",
-        "event_id": str(order.code),
+        "event_id": event_id,
         "user_data": user_data,
         "custom_data": {
             "currency": "BRL",
@@ -101,11 +92,9 @@ def send_purchase_event(order, test_event_code=None):
     }
     if event_source_url:
         event["event_source_url"] = event_source_url
-
     payload = {"data": [event]}
     if test_event_code:
         payload["test_event_code"] = test_event_code
-
     url = (
         "https://graph.facebook.com/"
         + _GRAPH_API_VERSION
@@ -113,7 +102,6 @@ def send_purchase_event(order, test_event_code=None):
         + str(pixel_id)
         + "/events"
     )
-
     try:
         response = requests.post(
             url,
@@ -122,17 +110,18 @@ def send_purchase_event(order, test_event_code=None):
             timeout=_TIMEOUT_SECONDS,
         )
     except requests.RequestException as exc:
-        logger.warning("CAPI: erro de rede ao enviar Purchase do pedido %s: %s", order.code, exc)
+        logger.warning("CAPI: erro de rede ao enviar %s do pedido %s: %s", event_name, order.code, exc)
         return False
-
     if response.status_code == 200:
-        logger.info("CAPI: Purchase enviado para o pedido %s (valor R$ %.2f).", order.code, value)
+        logger.info("CAPI: %s enviado para o pedido %s.", event_name, order.code)
         return True
-
-    logger.warning(
-        "CAPI: Meta recusou Purchase do pedido %s. HTTP %s - %s",
-        order.code,
-        response.status_code,
-        response.text[:500],
-    )
+    logger.warning("CAPI: Meta recusou %s do pedido %s. HTTP %s - %s", event_name, order.code, response.status_code, response.text[:300])
     return False
+
+
+def send_purchase_event(order, test_event_code=None):
+    return _send_event(order, "Purchase", test_event_code)
+
+
+def send_add_payment_info_event(order, test_event_code=None):
+    return _send_event(order, "AddPaymentInfo", test_event_code)

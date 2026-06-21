@@ -113,6 +113,11 @@ def checkout(request, package_id):
                 payment_url=charge["payment_url"],
                 response_data=charge["raw"],
             )
+            try:
+                from store.services.meta_capi import send_add_payment_info_event
+                send_add_payment_info_event(order)
+            except Exception:
+                logger.exception("CAPI: falha ao enviar AddPaymentInfo (checkout nao afetado)")
         except PaymentAPIError:
             logger.warning("Falha ao gerar cobrança Pix para o pedido %s.", order.code)
             order.payment_status = Order.PaymentStatus.ERROR
