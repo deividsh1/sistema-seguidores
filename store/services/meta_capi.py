@@ -125,3 +125,69 @@ def send_purchase_event(order, test_event_code=None):
 
 def send_add_payment_info_event(order, test_event_code=None):
     return _send_event(order, "AddPaymentInfo", test_event_code)
+
+
+def send_initiate_checkout_event(request, package, fbp="", fbc="", test_event_code=None):
+    """InitiateCheckout: disparado no GET do checkout (pedido ainda nao existe).
+    Usa dados do request (IP, user-agent, cookies fbp/fbc) e o valor do pacote.
+    event_id baseado em IP+pacote+hora, para deduplicar reloads na mesma sessao.
+    """
+    pixel_id = getattr(settings, "META_PIXEL_ID", "")
+    token = getattr(settings, "META_CAPI_TOKEN", "")
+    if not pixel_id or not token:
+        return False
+
+    try:
+        from store.security import get_client_ip
+        client_ip = get_client_ip(request) or ""
+    except Exception:
+        client_ip = ""
+    user_agent = request.META.get("HTTP_USER_AGENT", "")[:500]
+
+    user_data = {}
+    if client_ip:
+        user_data["client_ip_address"] = client_ip
+    if user_agent:
+        user_data["client_user_agent"] = user_agent
+    if fbp:
+        user_data["fbp"] = fbp
+    if fbc:
+        user_data["fbc"] = fbc
+
+    try:
+        value = float(package.price_brl)
+    except (TypeError, ValueError):
+        value = 0.0
+
+    # event_id estavel por IP+pacote+hora: dois reloads na mesma hora deduplicam
+    import hashlib as _hl
+    raw_id = f"IC_{client_ip}_{package.id}_{int(time.time() // 3600)}"
+    event_id = _hl.sha256(raw_id.encode()).hexdigest()[:32]
+
+    event = {
+        "event_name": "InitiateCheckout",
+        "event_time": int(time.time()),
+        "action_source": "website",
+        "event_id": event_id,
+        "user_data": user_data,
+        "custom_data": {"currency": "BRL", "value": round(value, 2)},
+    }
+    base_url = getattr(settings, "PUBLIC_BASE_URL", "") or ""
+    if base_url:
+        event["event_source_url"] = base_url.rstrip("/") + "/checkout/" + str(package.id) + "/"
+
+    payload = {"data": [event]}
+    if test_event_code:
+        payload["test_event_code"] = test_event_code
+
+    url = "https://graph.facebook.com/" + _GRAPH_API_VERSION + "/" + str(pixel_id) + "/events"
+    try:
+        response = requests.post(url, params={"access_token": token}, json=payload, timeout=_TIMEOUT_SECONDS)
+    except requests.RequestException as exc:
+        logger.warning("CAPI: erro de rede no InitiateCheckout (pacote %s): %s", package.id, exc)
+        return False
+    if response.status_code == 200:
+        logger.info("CAPI: InitiateCheckout enviado (pacote %s).", package.id)
+        return True
+    logger.warning("CAPI: Meta recusou InitiateCheckout (pacote %s). HTTP %s - %s", package.id, response.status_code, response.text[:300])
+    return False

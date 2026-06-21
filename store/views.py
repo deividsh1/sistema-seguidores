@@ -149,6 +149,14 @@ def checkout(request, package_id):
         service=package.service,
         active=True,
     ).order_by("position", "quantity")
+    if request.method == "GET":
+        try:
+            from store.services.meta_capi import send_initiate_checkout_event
+            _fbp = request.COOKIES.get("_fbp", "")
+            _fbc = request.COOKIES.get("_fbc", "")
+            send_initiate_checkout_event(request, package, fbp=_fbp, fbc=_fbc)
+        except Exception:
+            logger.exception("CAPI: falha ao enviar InitiateCheckout (pagina nao afetada)")
     return render(
         request,
         "store/checkout.html",
