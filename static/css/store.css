@@ -2957,3 +2957,137 @@ footer a { color: #ddd; text-decoration: none; }
 }
 /* toast-natural-motion-end */
 
+
+/* ===== VIDEO HERO + CARROSSEL ===== */
+.video-hero { padding: 2.5rem 0 1rem; }
+.video-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+.video-hero-copy h1 { font-size: 2.8rem; font-weight: 900; line-height: 1.05; margin: .6rem 0 1rem; }
+.video-hero-copy p { color: var(--muted); font-size: 1.05rem; margin-bottom: 1.6rem; }
+.video-hero-copy .hero-actions { display: flex; gap: .8rem; flex-wrap: wrap; }
+
+.video-hero-player { position: relative; display: flex; justify-content: center; }
+.video-hero-carousel { position: relative; width: 100%; max-width: 320px; }
+.vh-slide {
+  display: none;
+  width: 100%;
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow);
+  background: var(--ink);
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+}
+.vh-slide.active { display: block; }
+.vh-dots { display: flex; gap: .5rem; justify-content: center; margin-top: 1rem; }
+.vh-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 0; background: var(--line); cursor: pointer; padding: 0;
+  transition: background .2s, width .2s;
+}
+.vh-dot.active { background: var(--purple); width: 26px; border-radius: 6px; }
+
+/* Card de notificacao flutuante (prova social) */
+.social-proof-card {
+  position: absolute;
+  top: 1.5rem; left: -1rem;
+  z-index: 5;
+  display: flex; align-items: center; gap: .7rem;
+  background: var(--white);
+  border-radius: 1rem;
+  box-shadow: 0 .8rem 2rem rgba(41, 35, 80, .18);
+  padding: .7rem .9rem;
+  max-width: 250px;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity .4s, transform .4s;
+}
+.social-proof-card.show { opacity: 1; transform: translateY(0); }
+.social-proof-icon { flex-shrink: 0; display: flex; }
+.social-proof-text { font-size: .82rem; line-height: 1.25; color: var(--ink); }
+.social-proof-top { display: flex; justify-content: space-between; gap: .6rem; }
+.social-proof-top strong { font-weight: 800; }
+.social-proof-top span { color: var(--muted); font-size: .72rem; }
+
+/* Botoes de categoria */
+.category-pills {
+  display: flex; flex-wrap: wrap; gap: .7rem;
+  justify-content: center;
+  margin-top: 2.5rem;
+}
+.cat-pill {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: .7rem 1.3rem;
+  font-weight: 700; font-size: .9rem;
+  color: var(--ink); text-decoration: none;
+  box-shadow: 0 .3rem 1rem rgba(41, 35, 80, .06);
+  transition: transform .15s, box-shadow .15s, border-color .15s;
+}
+.cat-pill:hover {
+  transform: translateY(-2px);
+  border-color: var(--purple);
+  box-shadow: 0 .6rem 1.4rem rgba(118, 87, 232, .18);
+  color: var(--purple);
+}
+
+@media (max-width: 768px) {
+  .video-hero-grid { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
+  .video-hero-copy h1 { font-size: 2.1rem; }
+  .video-hero-copy .hero-actions { justify-content: center; }
+  .social-proof-card { left: 0; max-width: 210px; }
+}
+
+/* ===== VIDEOS DO TOPO (pagina plataforma) ===== */
+.ig-videos { padding: 1.5rem 0 0.5rem; }
+.ig-videos-grid {
+  display: flex;
+  gap: 1.2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.ig-video {
+  width: 260px;
+  height: 460px;
+  object-fit: cover;
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow);
+  background: var(--ink);
+  display: block;
+}
+@media (max-width: 600px) {
+  .ig-videos-grid { gap: 0.8rem; }
+  .ig-video { width: 46%; height: auto; aspect-ratio: 9 / 16; }
+}
+
+/* ===== Overlay de play/replay dos videos ===== */
+.ig-video-wrap { position: relative; }
+.ig-video-wrap-main { position: relative; }
+.ig-video-overlay {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  background: var(--ink);
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: .9rem 1.6rem;
+  font-weight: 800;
+  font-size: .95rem;
+  cursor: pointer;
+  box-shadow: 0 .8rem 2rem rgba(0,0,0,.3);
+  transition: transform .15s;
+}
+.ig-video-overlay:hover { transform: translate(-50%, -50%) scale(1.05); }
+.ig-video-overlay-icon { font-size: 1.1rem; }
+
+/* Video clicavel, sem botao visual */
+.ig-video { cursor: pointer; }

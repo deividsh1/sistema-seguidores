@@ -16,6 +16,65 @@
   </div>
 </section>
 
+<section class="ig-videos">
+  <div class="container">
+    <div class="ig-videos-grid" id="igVideosGrid">
+      <div class="ig-video-wrap">
+        <video class="ig-video" id="igVideo1" playsinline preload="metadata"></video>
+      </div>
+      <div class="ig-video-wrap">
+        <video class="ig-video" id="igVideo2" playsinline preload="metadata"></video>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var v1 = document.getElementById("igVideo1");
+  var v2 = document.getElementById("igVideo2");
+  if (!v1 || !v2) return;
+
+  v1.src = "https://res.cloudinary.com/de9owz6wh/video/upload/v1782139284/MeusVideos1_pczqho.mp4";
+  v2.src = "https://res.cloudinary.com/de9owz6wh/video/upload/v1782139298/MeusVideos2_tsmpai.mp4";
+  v2.style.display = "none";
+
+  var tocando = false;
+
+  function comecar() {
+    if (tocando) return;
+    tocando = true;
+    v1.muted = false;
+    v2.muted = false;
+    v1.currentTime = 0;
+    v2.currentTime = 0;
+    v1.style.display = "block";
+    v2.style.display = "none";
+    v1.play();
+  }
+
+  v1.addEventListener("ended", function () {
+    v1.style.display = "none";
+    v2.style.display = "block";
+    v2.play();
+  });
+
+  v2.addEventListener("ended", function () {
+    v2.pause();
+    v2.style.display = "none";
+    v1.style.display = "block";
+    tocando = false; // permite clicar de novo para reassistir
+  });
+
+  v1.addEventListener("click", comecar);
+  v2.addEventListener("click", function () {
+    // clique durante o video 2 nao faz nada (ja esta tocando)
+  });
+})();
+</script>
+
+
+
 <nav class="anchor-nav" aria-label="Categorias de serviço">
   <div class="container anchor-scroll">
     {% for service in platform.services.all %}<a href="#{{ service.slug }}">{{ service.name }}</a>{% endfor %}
