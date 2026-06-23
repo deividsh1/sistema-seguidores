@@ -16,14 +16,17 @@
   </div>
 </section>
 
-<section class="ig-videos">
+{% if platform.slug == "instagram" %}
+<section class="ig-videos" aria-label="Vídeos demonstrativos do Instagram">
   <div class="container">
-    <div class="ig-videos-grid" id="igVideosGrid">
-      <div class="ig-video-wrap">
-        <video class="ig-video" id="igVideo1" playsinline preload="metadata"></video>
-      </div>
-      <div class="ig-video-wrap">
-        <video class="ig-video" id="igVideo2" playsinline preload="metadata"></video>
+    <div class="ig-videos-grid mx-auto" id="igVideosGrid">
+      <div class="ig-video-wrap ig-video-wrap-main mx-auto">
+        <video class="ig-video is-active" id="igVideo1" playsinline preload="auto" aria-label="Demonstração 1 de serviço para Instagram">
+          <source src="https://res.cloudinary.com/de9owz6wh/video/upload/v1782139284/MeusVideos1_pczqho.mp4" type="video/mp4">
+        </video>
+        <video class="ig-video" id="igVideo2" playsinline preload="auto" aria-label="Demonstração 2 de serviço para Instagram" hidden>
+          <source src="https://res.cloudinary.com/de9owz6wh/video/upload/v1782139298/MeusVideos2_tsmpai.mp4" type="video/mp4">
+        </video>
       </div>
     </div>
   </div>
@@ -35,43 +38,59 @@
   var v2 = document.getElementById("igVideo2");
   if (!v1 || !v2) return;
 
-  v1.src = "https://res.cloudinary.com/de9owz6wh/video/upload/v1782139284/MeusVideos1_pczqho.mp4";
-  v2.src = "https://res.cloudinary.com/de9owz6wh/video/upload/v1782139298/MeusVideos2_tsmpai.mp4";
-  v2.style.display = "none";
-
   var tocando = false;
+  var videos = [v1, v2];
+
+  function exibir(videoAtual) {
+    videos.forEach(function (video) {
+      video.pause();
+      video.currentTime = 0;
+      video.hidden = video !== videoAtual;
+      video.classList.toggle("is-active", video === videoAtual);
+    });
+  }
+
+  function tocar(video) {
+    var tentativa = video.play();
+    if (tentativa && typeof tentativa.catch === "function") {
+      tentativa.catch(function () {
+        tocando = false;
+      });
+    }
+  }
 
   function comecar() {
     if (tocando) return;
     tocando = true;
-    v1.muted = false;
-    v2.muted = false;
-    v1.currentTime = 0;
-    v2.currentTime = 0;
-    v1.style.display = "block";
-    v2.style.display = "none";
-    v1.play();
+    if (v2.hidden) {
+      exibir(v1);
+      tocar(v1);
+      return;
+    }
+    tocar(v2);
   }
 
   v1.addEventListener("ended", function () {
-    v1.style.display = "none";
-    v2.style.display = "block";
-    v2.play();
+    v1.hidden = true;
+    v1.classList.remove("is-active");
+    v2.hidden = false;
+    v2.classList.add("is-active");
+    v2.currentTime = 0;
+    tocar(v2);
   });
 
   v2.addEventListener("ended", function () {
-    v2.pause();
-    v2.style.display = "none";
-    v1.style.display = "block";
-    tocando = false; // permite clicar de novo para reassistir
+    tocando = false;
+    exibir(v1);
   });
 
   v1.addEventListener("click", comecar);
-  v2.addEventListener("click", function () {
-    // clique durante o video 2 nao faz nada (ja esta tocando)
-  });
+  v1.addEventListener("pointerup", comecar);
+  v2.addEventListener("click", comecar);
+  v2.addEventListener("pointerup", comecar);
 })();
 </script>
+{% endif %}
 
 
 

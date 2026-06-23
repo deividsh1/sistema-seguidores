@@ -3042,52 +3042,65 @@ footer a { color: #ddd; text-decoration: none; }
   .social-proof-card { left: 0; max-width: 210px; }
 }
 
-/* ===== VIDEOS DO TOPO (pagina plataforma) ===== */
+/* ===== Videos do topo (pagina Instagram) ===== */
 .ig-videos { padding: 1.5rem 0 0.5rem; }
-.ig-videos-grid {
+.ig-videos .container {
   display: flex;
-  gap: 1.2rem;
   justify-content: center;
-  flex-wrap: wrap;
+}
+.ig-videos-grid {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+.ig-video-wrap {
+  flex: 0 1 260px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 260px;
+  position: relative;
+  width: min(260px, 82vw);
 }
 .ig-video {
-  width: 260px;
-  height: 460px;
-  object-fit: cover;
+  aspect-ratio: 9 / 16;
+  background: var(--ink);
   border-radius: 1.25rem;
   box-shadow: var(--shadow);
-  background: var(--ink);
   display: block;
+  height: auto;
+  object-fit: cover;
+  width: 100%;
+}
+.ig-video[hidden] {
+  display: none;
 }
 @media (max-width: 600px) {
-  .ig-videos-grid { gap: 0.8rem; }
-  .ig-video { width: 46%; height: auto; aspect-ratio: 9 / 16; }
+  .ig-videos .container {
+    max-width: none;
+    padding-left: 0;
+    padding-right: 0;
+    width: 100%;
+    justify-content: center;
+  }
+  .ig-videos-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    width: 100%;
+  }
+  .ig-video-wrap {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: min(260px, 72vw);
+    width: min(260px, 72vw);
+  }
 }
-
-/* ===== Overlay de play/replay dos videos ===== */
-.ig-video-wrap { position: relative; }
-.ig-video-wrap-main { position: relative; }
-.ig-video-overlay {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: .6rem;
-  background: var(--ink);
-  color: #fff;
-  border: 0;
-  border-radius: 999px;
-  padding: .9rem 1.6rem;
-  font-weight: 800;
-  font-size: .95rem;
-  cursor: pointer;
-  box-shadow: 0 .8rem 2rem rgba(0,0,0,.3);
-  transition: transform .15s;
-}
-.ig-video-overlay:hover { transform: translate(-50%, -50%) scale(1.05); }
-.ig-video-overlay-icon { font-size: 1.1rem; }
 
 /* Video clicavel, sem botao visual */
 .ig-video { cursor: pointer; }

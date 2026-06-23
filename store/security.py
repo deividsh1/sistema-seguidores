@@ -80,6 +80,7 @@ class SecurityHeadersMiddleware:
             "img-src 'self' data: https:; "
             "font-src 'self' data:; "
             "connect-src 'self' https://connect.facebook.net https://www.facebook.com; "
+            "media-src 'self' https://res.cloudinary.com; "
             "frame-ancestors 'none'; object-src 'none'; base-uri 'self'; "
             "form-action 'self'",
         )
