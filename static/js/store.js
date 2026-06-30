@@ -822,7 +822,20 @@ if (activityToast && !checkoutForm) {
 
   window.addEventListener("beforeunload", resetToast);
 }
+/* ===== FAQ acordeão ===== */
+document.querySelectorAll(".faq-trigger").forEach((trigger) => {
+  trigger.addEventListener("click", () => {
+    const expanded = trigger.getAttribute("aria-expanded") === "true";
+    const body = trigger.nextElementSibling;
 
+    trigger.setAttribute("aria-expanded", String(!expanded));
+    if (expanded) {
+      body.style.maxHeight = null;
+    } else {
+      body.style.maxHeight = body.scrollHeight + "px";
+    }
+  });
+});
 
 
 

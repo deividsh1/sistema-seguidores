@@ -437,3 +437,145 @@ class ProviderLog(models.Model):
 
     def __str__(self):
         return f"{self.get_level_display()}: {self.action}"
+
+
+# ---------------------------------------------------------------------------
+# Quiz / Funil
+# ---------------------------------------------------------------------------
+
+
+class QuizQuestion(models.Model):
+    text = models.CharField("pergunta", max_length=500)
+    position = models.PositiveIntegerField("posição", default=0)
+    active = models.BooleanField("ativa", default=True)
+
+    class Meta:
+        verbose_name = "pergunta do quiz"
+        verbose_name_plural = "perguntas do quiz"
+        ordering = ("position",)
+
+    def __str__(self):
+        return self.text
+
+
+class QuizOption(models.Model):
+    question = models.ForeignKey(
+        QuizQuestion,
+        verbose_name="pergunta",
+        related_name="options",
+        on_delete=models.CASCADE,
+    )
+    text = models.CharField("opção", max_length=300)
+    position = models.PositiveIntegerField("posição", default=0)
+    next_question = models.ForeignKey(
+        QuizQuestion,
+        verbose_name="próxima pergunta",
+        related_name="incoming_options",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+    result = models.ForeignKey(
+        "QuizResult",
+        verbose_name="resultado",
+        related_name="triggering_options",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+
+    class Meta:
+        verbose_name = "opção do quiz"
+        verbose_name_plural = "opções do quiz"
+        ordering = ("position",)
+
+    def __str__(self):
+        return f"{self.question} → {self.text}"
+
+    def clean(self):
+        if self.next_question and self.result:
+            raise ValidationError(
+                "Uma opção deve levar à próxima pergunta OU ao resultado, não a ambos."
+            )
+        if not self.next_question and not self.result:
+            raise ValidationError(
+                "Uma opção deve levar à próxima pergunta ou a um resultado."
+            )
+
+
+class QuizResult(models.Model):
+    class Layout(models.TextChoices):
+        THREE_BY_TWO = "3x2", "3×2 (6 pacotes)"
+        THREE_BY_THREE = "3x3", "3×3 (9 pacotes)"
+
+    title = models.CharField("título interno", max_length=200)
+    layout = models.CharField(
+        "layout da grade",
+        max_length=3,
+        choices=Layout.choices,
+        default=Layout.THREE_BY_TWO,
+    )
+    active = models.BooleanField("ativo", default=True)
+    grid_title = models.CharField(
+        "título da grade",
+        max_length=200,
+        default="Os melhores pacotes para o seu perfil",
+        blank=True,
+    )
+    grid_subtitle = models.CharField(
+        "subtítulo da grade",
+        max_length=300,
+        default="Clique no pacote que faz mais sentido para você agora.",
+        blank=True,
+    )
+    button_text = models.CharField(
+        "texto do botão",
+        max_length=60,
+        default="Escolher pacote",
+        blank=True,
+    )
+    badge_text = models.CharField(
+        "texto do selo de destaque",
+        max_length=40,
+        default="MAIS VENDIDO",
+        blank=True,
+    )
+
+    class Meta:
+        verbose_name = "resultado do quiz"
+        verbose_name_plural = "resultados do quiz"
+
+    def __str__(self):
+        return self.title
+
+
+class QuizResultPackage(models.Model):
+    result = models.ForeignKey(
+        QuizResult,
+        verbose_name="resultado",
+        related_name="result_packages",
+        on_delete=models.CASCADE,
+    )
+    package = models.ForeignKey(
+        Package,
+        verbose_name="pacote",
+        related_name="quiz_result_packages",
+        on_delete=models.PROTECT,
+    )
+    position = models.PositiveIntegerField(
+        "posição na grade",
+        help_text="1 a 6 para grade 3×2; 1 a 9 para grade 3×3.",
+    )
+
+    class Meta:
+        verbose_name = "pacote do resultado"
+        verbose_name_plural = "pacotes do resultado"
+        ordering = ("position",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=("result", "position"), name="unique_position_per_result"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.result} — posição {self.position}"

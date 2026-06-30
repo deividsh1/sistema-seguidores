@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Qual pacote ideal para você? | WebMaster{% endblock %}
+{% block meta_description %}Responda algumas perguntas rápidas e descubra o pacote ideal para o seu perfil.{% endblock %}
+
+{% block content %}
+<div class="quiz-progress-wrap" aria-hidden="true">
+  <div class="quiz-progress-bar" id="quizProgressBar" style="width:8%"></div>
+</div>
+
+<section class="quiz-panel" id="quizPanel">
+  <div class="container quiz-container">
+    <p class="eyebrow quiz-eyebrow">Personalizando para você</p>
+    <h1 class="quiz-question" id="quizQuestion">{{ question.text }}</h1>
+    <div class="quiz-options" id="quizOptions" role="list"></div>
+  </div>
+</section>
+
+<section class="quiz-result" id="quizResult" hidden>
+  <div class="container">
+    <div class="quiz-result-header text-center">
+      <p class="eyebrow">Seu resultado personalizado</p>
+      <h2 id="quizResultTitle">Os melhores pacotes para o seu perfil</h2>
+      <p id="quizResultSub" class="quiz-result-sub">Clique no pacote que faz mais sentido para você agora.</p>
+    </div>
+    <div class="package-selector quiz-result-grid" id="quizResultGrid" role="list"></div>
+    <p class="quiz-result-reassurance">
+      <span>&#10003; Não pedimos sua senha</span>
+      <span>&#10003; Pagamento via Pix</span>
+      <span>&#10003; Perfil sempre sob seu controle</span>
+    </p>
+  </div>
+</section>
+
+
+<script>
+(function () {
+  "use strict";
+
+  var STEP_URL = "{% url 'store:quiz_step' %}";
+  var CSRF    = "{{ csrf_token }}";
+
+  var panelEl      = document.getElementById("quizPanel");
+  var questionEl   = document.getElementById("quizQuestion");
+  var optionsEl    = document.getElementById("quizOptions");
+  var resultEl     = document.getElementById("quizResult");
+  var resultGrid   = document.getElementById("quizResultGrid");
+  var resultTitle  = document.getElementById("quizResultTitle");
+  var resultSub    = document.getElementById("quizResultSub");
+  var progressBar  = document.getElementById("quizProgressBar");
+
+  var stepNum   = 1;
+  var progress  = 8;
+
+  /* ---- initial options rendered from server ---- */
+  var FIRST_OPTIONS = {{ options_json|safe }};
+
+  function buildOptions(options) {
+    optionsEl.innerHTML = "";
+    options.forEach(function (opt) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-opt";
+      btn.dataset.optionId = opt.id;
+      btn.setAttribute("role", "listitem");
+      btn.textContent = opt.text;
+      btn.addEventListener("click", handleClick);
+      optionsEl.appendChild(btn);
+    });
+  }
+
+  function advanceProgress() {
+    stepNum++;
+    progress = Math.min(progress + 14, 88);
+    progressBar.style.width = progress + "%";
+  }
+
+  function lockOptions() {
+    optionsEl.querySelectorAll(".quiz-opt").forEach(function (b) { b.disabled = true; });
+    panelEl.classList.add("is-loading");
+  }
+
+  function unlockOptions() {
+    optionsEl.querySelectorAll(".quiz-opt").forEach(function (b) { b.disabled = false; });
+    panelEl.classList.remove("is-loading");
+  }
+
+  function showQuestion(q) {
+    advanceProgress();
+    questionEl.textContent = q.text;
+    buildOptions(q.options);
+    /* re-trigger animation */
+    panelEl.style.animation = "none";
+    panelEl.offsetHeight;
+    panelEl.style.animation = "";
+    unlockOptions();
+  }
+
+  function buildPackageCard(pkg, badgeText, buttonText) {
+    var a = document.createElement("a");
+    a.className = "package-card" + (pkg.featured ? " featured" : "");
+    a.href = pkg.url;
+    a.setAttribute("role", "listitem");
+    a.setAttribute("aria-label", pkg.name + " por R$ " + pkg.price);
+
+    var priceNum = parseFloat(pkg.price);
+    var priceStr = priceNum.toLocaleString("pt-BR", { minimumFractionDigits: 2 });
+
+    a.innerHTML =
+      (pkg.featured ? '<span class="popular">' + badgeText + '</span>' : "") +
+      '<strong class="package-quantity">' + pkg.quantity + '</strong>' +
+      '<span class="package-label">' + pkg.name + '</span>' +
+      '<span class="package-price">R$ ' + priceStr + '</span>' +
+      '<span class="package-action">' + buttonText + '</span>';
+
+    return a;
+  }
+
+  function showResult(data) {
+    progressBar.style.width = "100%";
+    panelEl.hidden = true;
+    resultTitle.textContent = data.grid_title;
+    resultSub.textContent   = data.grid_subtitle;
+    resultGrid.innerHTML = "";
+    resultGrid.style.gridTemplateColumns = "repeat(3, minmax(0, 1fr))";
+    data.packages.forEach(function (pkg) {
+      resultGrid.appendChild(buildPackageCard(pkg, data.badge_text, data.button_text));
+    });
+    resultEl.hidden = false;
+    resultEl.style.animation = "none";
+    resultEl.offsetHeight;
+    resultEl.style.animation = "";
+    resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function handleClick(e) {
+    var optionId = e.currentTarget.dataset.optionId;
+    lockOptions();
+
+    fetch(STEP_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": CSRF,
+      },
+      body: JSON.stringify({ option_id: parseInt(optionId, 10) }),
+    })
+      .then(function (r) {
+        if (!r.ok) throw new Error("server error");
+        return r.json();
+      })
+      .then(function (data) {
+        if (data.type === "question") {
+          showQuestion(data.question);
+        } else if (data.type === "result") {
+          showResult(data);
+        } else {
+          unlockOptions();
+        }
+      })
+      .catch(function () {
+        unlockOptions();
+      });
+  }
+
+  /* bootstrap first question options */
+  buildOptions(FIRST_OPTIONS);
+})();
+</script>
+{% endblock %}

@@ -11,7 +11,16 @@ from django.views.decorators.http import require_GET, require_POST
 
 from store.context_processors import build_whatsapp_url
 from store.forms import OrderForm, OrderLookupForm
-from store.models import Order, Package, PaymentLog, Platform, ProviderLog, Service
+from store.models import (
+    Order,
+    Package,
+    PaymentLog,
+    Platform,
+    ProviderLog,
+    QuizOption,
+    QuizQuestion,
+    Service,
+)
 from store.security import rate_limit
 from store.services.order_processing import process_payment_notification
 from store.services.payment_api import (
@@ -403,3 +412,76 @@ payment_webhook = mercadopago_webhook
 
 def terms(request):
     return render(request, "store/terms.html")
+
+
+# ---------------------------------------------------------------------------
+# Quiz / Funil
+# ---------------------------------------------------------------------------
+
+
+def quiz(request):
+    import json
+
+    first_q = QuizQuestion.objects.filter(active=True).order_by("position").first()
+    if not first_q:
+        return redirect("store:home")
+    options = list(first_q.options.order_by("position").values("id", "text"))
+    return render(
+        request,
+        "store/quiz.html",
+        {
+            "question": first_q,
+            "options_json": json.dumps(options, ensure_ascii=False),
+        },
+    )
+
+
+@require_POST
+def quiz_step(request):
+    import json
+
+    try:
+        body = json.loads(request.body)
+        option_id = int(body["option_id"])
+    except (ValueError, TypeError, KeyError):
+        return JsonResponse({"error": "Opção inválida."}, status=400)
+
+    option = get_object_or_404(
+        QuizOption.objects.select_related("next_question", "result"),
+        pk=option_id,
+    )
+
+    if option.next_question_id:
+        q = option.next_question
+        opts = list(q.options.order_by("position").values("id", "text"))
+        return JsonResponse({"type": "question", "question": {"id": q.id, "text": q.text, "options": opts}})
+
+    if not option.result_id:
+        logger.warning("Quiz: opção %s sem destino (next_question nem result).", option_id)
+        return JsonResponse({"type": "misconfigured"})
+
+    result = option.result
+    pkgs = (
+        result.result_packages
+        .select_related("package__service")
+        .order_by("position")
+    )
+    return JsonResponse({
+        "type": "result",
+        "layout": result.layout,
+        "grid_title": result.grid_title or "Os melhores pacotes para o seu perfil",
+        "grid_subtitle": result.grid_subtitle or "Clique no pacote que faz mais sentido para você agora.",
+        "button_text": result.button_text or "Escolher pacote",
+        "badge_text": result.badge_text or "MAIS VENDIDO",
+        "packages": [
+            {
+                "position": rp.position,
+                "name": rp.package.name,
+                "quantity": rp.package.formatted_quantity,
+                "price": str(rp.package.price_brl),
+                "featured": rp.package.featured,
+                "url": rp.package.get_absolute_url(),
+            }
+            for rp in pkgs
+        ],
+    })

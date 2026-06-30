@@ -30,4 +30,6 @@ urlpatterns = [
         name="mercadopago_webhook",
     ),
     path("webhooks/payment/", views.payment_webhook, name="payment_webhook"),
+    path("quiz/", views.quiz, name="quiz"),
+    path("quiz/passo/", views.quiz_step, name="quiz_step"),
 ]

@@ -7,6 +7,10 @@ from store.models import (
     PaymentLog,
     Platform,
     ProviderLog,
+    QuizOption,
+    QuizQuestion,
+    QuizResult,
+    QuizResultPackage,
     Service,
 )
 from store.services.order_processing import dispatch_paid_order
@@ -170,6 +174,47 @@ class ProviderLogAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, request):
         return False
+
+
+# ---------------------------------------------------------------------------
+# Quiz / Funil
+# ---------------------------------------------------------------------------
+
+
+class QuizOptionInline(admin.TabularInline):
+    model = QuizOption
+    fk_name = "question"
+    extra = 1
+    fields = ("text", "position", "next_question", "result")
+
+
+@admin.register(QuizQuestion)
+class QuizQuestionAdmin(admin.ModelAdmin):
+    list_display = ("text", "position", "active")
+    list_editable = ("position", "active")
+    inlines = (QuizOptionInline,)
+
+
+class QuizResultPackageInline(admin.TabularInline):
+    model = QuizResultPackage
+    extra = 1
+    fields = ("position", "package")
+
+
+@admin.register(QuizResult)
+class QuizResultAdmin(admin.ModelAdmin):
+    list_display = ("title", "layout", "active")
+    list_editable = ("layout", "active")
+    fields = (
+        "title",
+        "layout",
+        "active",
+        "grid_title",
+        "grid_subtitle",
+        "button_text",
+        "badge_text",
+    )
+    inlines = (QuizResultPackageInline,)
 
 
 admin.site.site_header = "WebMaster | Administração"
